@@ -9,8 +9,6 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
 
-    private UUID userId;
-
     private String username;
 
     private String email;
