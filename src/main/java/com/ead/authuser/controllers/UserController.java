@@ -66,7 +66,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/{userId}/password")
     public ResponseEntity<Object> updatePassword(@PathVariable(value = "userId") UUID userId,
                                              @RequestBody @JsonView(UserDto.UserView.PasswordPut.class) UserDto userDto) {
         Optional<UserModel> optionalUserModel = userService.findById(userId);
@@ -74,7 +74,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
-        if (optionalUserModel.get().getPassword().equals(userDto.getOldPassword())) {
+        if (!optionalUserModel.get().getPassword().equals(userDto.getOldPassword())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Mismatched old password!");
         }
 
@@ -83,6 +83,21 @@ public class UserController {
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModel);
         return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully.");
+    }
+
+    @PutMapping("/{userId}/image")
+    public ResponseEntity<Object> updateImage(@PathVariable(value = "userId") UUID userId,
+                                                 @RequestBody @JsonView(UserDto.UserView.ImagePut.class) UserDto userDto) {
+        Optional<UserModel> optionalUserModel = userService.findById(userId);
+        if (!optionalUserModel.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+
+        var userModel = optionalUserModel.get();
+        userModel.setImageUrl(userDto.getImageUrl());
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
+        userService.save(userModel);
+        return ResponseEntity.status(HttpStatus.OK).body(userModel);
     }
 
 }
