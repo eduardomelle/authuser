@@ -53,7 +53,13 @@ public class AuthenticationController {
 
     @GetMapping("/")
     public String index() {
-        return "Logging Spring Boot";
+        logger.trace("TRACE");
+        logger.debug("DEBUG");
+        logger.info("INFO");
+        logger.warn("WARN");
+        logger.error("ERROR");
+
+        return "Logging Spring Boot...";
     }
 
 }
