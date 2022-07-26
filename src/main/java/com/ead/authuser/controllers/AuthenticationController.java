@@ -31,11 +31,15 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity<Object> registerUser(@RequestBody @Validated(UserDto.UserView.RegistrationPost.class)
                                                    @JsonView(UserDto.UserView.RegistrationPost.class) UserDto userDto) {
+        log.debug("POST registerUser userDto received {}" + userDto.toString());
+
         if (userService.existsByUsername(userDto.getUsername())) {
+            log.debug("Username {} is Already Taken!" + userDto.getUsername());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username is Already Taken!");
         }
 
         if (userService.existsByEmail(userDto.getEmail())) {
+            log.debug("Email {} is Already Taken!" + userDto.getEmail());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is Already Taken!");
         }
 
@@ -46,6 +50,10 @@ public class AuthenticationController {
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModel);
+
+        log.debug("POST registerUser userModel saved {}" + userModel.toString());
+        log.info("User saved successfully userId {}" + userModel.getUserId());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
     }
 
